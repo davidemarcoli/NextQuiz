@@ -1,4 +1,4 @@
-Sitemap: https://precedent.dev/sitemap.xml
+Sitemap: https://next-quiz.davidemarcoli.dev/sitemap.xml
 
 User-agent: *
 Disallow: /api
