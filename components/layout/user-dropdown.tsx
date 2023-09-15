@@ -8,11 +8,10 @@ import Image from "next/image";
 import { Session } from "next-auth";
 
 export default function UserDropdown({ session }: { session: Session }) {
+  console.log("session", session)
   const { email, image } = session?.user || {};
   const [openPopover, setOpenPopover] = useState(false);
-
-  if (!email) return null;
-
+  
   return (
     <div className="relative inline-block text-left">
       <Popover
@@ -50,7 +49,7 @@ export default function UserDropdown({ session }: { session: Session }) {
           className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
         >
           <Image
-            alt={email}
+            alt={email || "User"}
             src={image || `https://avatars.dicebear.com/api/micah/${email}.svg`}
             width={40}
             height={40}

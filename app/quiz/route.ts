@@ -44,12 +44,11 @@ export async function POST(req: NextRequest) {
             words: {
                 create: words
             },
-            userId: session.user.id
-            // user: {
-            //     connect: {
-            //         id: session.user.id
-            //     }
-            // }
+            user: {
+                connect: {
+                    id: session.user.id
+                }
+            }
         }
     });
 
