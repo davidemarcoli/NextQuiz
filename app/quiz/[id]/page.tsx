@@ -26,6 +26,7 @@ export default async function Page({params}: { params: { id: string } }) {
         <>
             <h1 className={'text-3xl'}>{quiz.name}</h1>
             <Suspense fallback={<div>Loading Words...</div>}>
+                {/* @ts-expect-error Server Component */}
                 <ShowQuiz params={params.id} />
             </Suspense>
         </>
