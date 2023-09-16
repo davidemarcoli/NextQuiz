@@ -21,6 +21,7 @@ import {Textarea} from "@/components/ui/textarea";
 import { RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { RadioGroup } from "@radix-ui/react-radio-group";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
     quizName: z.string(),
@@ -29,6 +30,8 @@ const formSchema = z.object({
 })
 
 export default function CreateQuiz() {
+
+    const { toast } = useToast()
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -84,7 +87,13 @@ export default function CreateQuiz() {
                 name: values.quizName,
                 words
             })
-        }).then(r => r.json()).then(r => console.log(r));
+        }).then(r => r.json()).then(r => {
+            console.log(r)
+            toast({
+                title: "Quiz created",
+                description: "Your quiz has been created",
+            })
+        });
     }
 
     return (
