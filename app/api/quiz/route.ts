@@ -24,11 +24,12 @@ import {NextRequest, NextResponse} from "next/server";
 import prisma from "@/lib/prisma";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
-import {Session} from "next-auth";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
+    console.time("quiz")
+
     const { name, words } = await req.json();
     const session = await getServerSession(authOptions) as any;
     // console.log(session)
@@ -53,6 +54,8 @@ export async function POST(req: NextRequest) {
             }
         }
     });
+
+    console.timeEnd("quiz")
 
     return NextResponse.json(newQuiz)
     // return NextResponse.json({})
