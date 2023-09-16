@@ -26,6 +26,8 @@ import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 import {Session} from "next-auth";
 
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
     const { name, words } = await req.json();
     const session = await getServerSession(authOptions) as any;
