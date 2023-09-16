@@ -37,7 +37,7 @@ async function getQuizWithWords(id: string): Promise<Quiz & { words: QuizWord[] 
 //     );
 // }
 
-export default async function Cards({params}: { params: { id: string } }) {
+export default function Page({params}: { params: { id: string } }) {
 
     /*export default async function Cards({params}: any) {
     console.log(params)
@@ -52,8 +52,8 @@ export default async function Cards({params}: { params: { id: string } }) {
         console.log('useEffect', params.id)
         getQuizWithWords(params.id).then(value => {
             console.log('value 2', value);
-            setLoading(false);
             setFullQuiz(value);
+            setLoading(false);
         }).catch(reason => {
             console.log('reason', reason);
         });
@@ -81,13 +81,13 @@ export default async function Cards({params}: { params: { id: string } }) {
             <h1 className={'text-3xl'}>{fullQuiz.name}</h1>
             <div className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2" onClick={() => setIsFlipped(!isFlipped)}>
                 {/*<WordCard cardData={fullQuiz.words[currentCard]} isFlipped={isFlipped}/>*/}
-                <Card className="w-full h-full select-none">
-                    <CardContent>
+                <Card className="w-full h-full select-none p-8">
+                    {/*<CardContent>*/}
                         <CardTitle>{isFlipped ? fullQuiz.words[currentCard].term : fullQuiz.words[currentCard].definition}</CardTitle>
-                    </CardContent>
+                    {/*</CardContent>*/}
                 </Card>
             </div>
-            <Button className="mt-4" onClick={() => changeCard(-1)}>Previous</Button>
+            <Button className="mt-4 mr-4" onClick={() => changeCard(-1)}>Previous</Button>
             <Button className="mt-4" onClick={() => changeCard(1)}>Next</Button>
         </>
     );
