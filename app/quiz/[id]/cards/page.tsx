@@ -13,7 +13,7 @@ async function getQuizWithWords(id: string): Promise<Quiz & { words: QuizWord[] 
     // });
 
     console.log(`Getting quiz with id ${id}`)
-    return await fetch('http://localhost:3000/api/quiz/' + id, {
+    return await fetch('/api/quiz/' + id, {
         method: 'GET',
         cache: 'no-cache',
     }).then(value => {
