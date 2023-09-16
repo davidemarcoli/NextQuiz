@@ -6,6 +6,8 @@ import useScroll from "@/lib/hooks/use-scroll";
 import { useSignInModal } from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
 import { Session } from "next-auth";
+import {ModeToggle} from "@/components/mode-toggle";
+import {Button} from "@/components/ui/button";
 
 export default function NavBar({ session }: { session: Session | null }) {
   const { SignInModal, setShowSignInModal } = useSignInModal();
@@ -13,11 +15,10 @@ export default function NavBar({ session }: { session: Session | null }) {
 
   return (
     <>
-      <SignInModal />
       <div
         className={`fixed top-0 w-full flex justify-center ${
           scrolled
-            ? "border-b border-gray-200 bg-white/50 backdrop-blur-xl"
+            ? "backdrop-blur-xl"
             : "bg-white/0"
         } z-30 transition-all`}
       >
@@ -33,25 +34,17 @@ export default function NavBar({ session }: { session: Session | null }) {
             <p>Next Quiz</p>
           </Link>
             <Link href={`/quiz/create`}>
-                <button className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black">
-                    Create Quiz
-                </button>
+                <Button>Create Quiz</Button>
             </Link>
             <Link href={`/quiz/list`}>
-                <button className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black">
-                    List Quizzes
-                </button>
+                <Button>Quiz List</Button>
             </Link>
+            <ModeToggle />
           <div>
             {session ? (
               <UserDropdown session={session} />
             ) : (
-              <button
-                className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                onClick={() => setShowSignInModal(true)}
-              >
-                Sign In
-              </button>
+                <SignInModal />
             )}
           </div>
         </div>

@@ -2,6 +2,7 @@ import {Quiz, QuizWord} from "@prisma/client";
 import Balancer from "react-wrap-balancer";
 import prisma from "@/lib/prisma";
 import {Suspense} from "react";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 
 async function getQuiz(id: string): Promise<Quiz | null> {
     console.log(`Getting small quiz with id ${id}`)
@@ -62,15 +63,28 @@ async function ShowQuiz({params}: { params: { id: string } }) {
             <div className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2">
                 {fullQuiz.words.map((word) => {
                     return (
-                        <div
-                            key={word.id}
-                            className={`relative col-span-1 h-96 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md md:col-span-2 flex flex-col justify-between`}
-                        >
-                            <p><b>{word.term}</b></p>
-                            <p>{word.definition}</p>
-                        </div>
+                        // <div
+                        //     key={word.id}
+                        //     className={`relative col-span-1 h-96 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md md:col-span-2 flex flex-col justify-between`}
+                        // >
+                        //     <p><b>{word.term}</b></p>
+                        //     <p>{word.definition}</p>
+                        // </div>
+                        <Card key={word.id}>
+                            <CardHeader>
+                                <CardTitle>{word.id}</CardTitle>
+                                {/*<CardDescription>Card Description</CardDescription>*/}
+                            </CardHeader>
+                            <CardContent>
+                                <p>{word.term}</p>
+                                <p>{word.definition}</p>
+                            </CardContent>
+                            {/*<CardFooter>*/}
+                            {/*    <p>Card Footer</p>*/}
+                            {/*</CardFooter>*/}
+                        </Card>
                     );
-                })};
+                })}
             </div>
         </>
     );
