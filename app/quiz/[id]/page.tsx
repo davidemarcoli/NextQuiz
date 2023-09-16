@@ -1,8 +1,9 @@
 import {Quiz, QuizWord} from "@prisma/client";
-import Balancer from "react-wrap-balancer";
 import prisma from "@/lib/prisma";
 import {Suspense} from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
 
 async function getQuiz(id: string): Promise<Quiz | null> {
     console.log(`Getting small quiz with id ${id}`)
@@ -60,6 +61,9 @@ async function ShowQuiz({params}: { params: { id: string } }) {
 
     return (
         <>
+            <Link href={`/quiz/${params.id}/cards`}>
+                <Button>Cards</Button>
+            </Link>
             <div className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2">
                 {fullQuiz.words.map((word) => {
                     return (

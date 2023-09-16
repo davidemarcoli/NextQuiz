@@ -17,7 +17,7 @@ import {Button} from "@/components/ui/button";
 import * as React from "react";
 
 export default function UserDropdown({ session }: { session: Session }) {
-  console.log("session", session)
+  // console.log("session", session)
   const { email, image } = session?.user || {};
   const [openPopover, setOpenPopover] = useState(false);
   
