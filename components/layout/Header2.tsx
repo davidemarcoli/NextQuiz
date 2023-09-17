@@ -114,8 +114,16 @@ const Header = ({ session }: { session: Session | null }) => {
               alt="Next Quiz Logo"
               width="30"
               height="30"
+              quality={90}
               className="mr-2 rounded-sm"
             ></Image>
+            {/*<Image*/}
+            {/*    src="/logo.original.png"*/}
+            {/*    alt="Next Quiz Logo"*/}
+            {/*    width="30"*/}
+            {/*    height="30"*/}
+            {/*    className="mr-2 rounded-sm"*/}
+            {/*></Image>*/}
             <p>Next Quiz</p>
           </Link>
           <nav className="mx-6 flex hidden items-center space-x-4 md:block lg:space-x-6">
