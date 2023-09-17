@@ -89,9 +89,9 @@ export default function Page({params}: { params: { id: string } }) {
                 setAnimateFlip(true);  // Enable flip animation
             }}>
                 {/*<WordCard cardData={fullQuiz.words[currentCard]} isFlipped={isFlipped}/>*/}
-                <Card className={`w-full h-full select-none p-8 relative flex justify-center items-center ${animateFlip ? 'transition-all duration-500 [transform-style:preserve-3d]' : ''} ${
-                    animateFlip ? (isFlipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]') : ''
-                }`}>
+                <Card className={`w-full h-full select-none p-8 relative flex justify-center items-center ${animateFlip ? `transition-all duration-500 [transform-style:preserve-3d] ${
+                    isFlipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'
+                }` : ''}`}>
                     {/*<CardContent>*/}
                     <CardTitle className={"[transform:rotateY(180deg)] text-center h-fit absolute"} style={{backfaceVisibility: "hidden"}}>{fullQuiz.words[currentCard].term}</CardTitle>
                     <CardTitle className={"[transform:rotateY(0deg)] text-center h-fit absolute"} style={{backfaceVisibility: "hidden"}}>{fullQuiz.words[currentCard].definition}</CardTitle>
@@ -100,7 +100,7 @@ export default function Page({params}: { params: { id: string } }) {
             </div>
             <Button className="mt-4 mr-4" onClick={() => changeCard(-1)}>Previous</Button>
             <Button className="mt-4 mr-4" onClick={() => changeCard(1)}>Next</Button>
-            <Button className="mt-4" onClick={() => {
+            <Button className="mt-4 mr-4" onClick={() => {
                 const newQuiz = {...fullQuiz};
                 newQuiz.words = newQuiz.words.sort(() => Math.random() - 0.5);
                 setFullQuiz(newQuiz);
