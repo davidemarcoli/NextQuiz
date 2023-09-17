@@ -74,3 +74,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+body {
+  width: calc(100vw - var(--removed-body-scroll-bar-size));
+  overflow-x: hidden;
+  padding-right: calc(0 - var(--removed-body-scroll-bar-size)) !important;
+}
+
+html body {
+  overflow: initial !important;
+}

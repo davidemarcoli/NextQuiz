@@ -36,7 +36,7 @@ export default async function RootLayout({
                 {/* @ts-expect-error Server Component */}
                 <Nav/>
                 {/*</Suspense>*/}
-                <main className={"mt-16"}>
+                <main className={"mt-16 mx-4"}>
                     {children}
                 </main>
                 <Toaster />
