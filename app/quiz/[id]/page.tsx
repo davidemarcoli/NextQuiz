@@ -50,7 +50,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <h1 className={"text-3xl"}>{quiz.name}</h1>
+      <h1 className={"text-3xl mb-2"}>{quiz.name}</h1>
       <Suspense fallback={<div>Loading Words...</div>}>
         {/* @ts-expect-error Server Component */}
         <ShowQuiz params={params} />
@@ -68,8 +68,14 @@ async function ShowQuiz({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <Link href={`/quiz/${params.id}/cards`}>
+      <Link className="mr-4" href={`/quiz/${params.id}/cards`}>
         <Button>Cards</Button>
+      </Link>
+      <Link className="mr-4" href={`/quiz/${params.id}/learn`}>
+        <Button>Learn</Button>
+      </Link>
+      <Link href={`/quiz/${params.id}/evaluation`}>
+        <Button>Evaluation</Button>
       </Link>
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         {fullQuiz.words.map((word) => {
