@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { inter, sfPro } from "@/app/fonts";
 import { cx } from "class-variance-authority";
 import { Toaster } from "@/components/ui/toaster";
+import Head from "next/head";
 
 export const metadata = {
   title: "NextQuiz",
