@@ -2,25 +2,26 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import {LayoutDashboard, LogOut, Moon, Sun} from "lucide-react";
+import { LayoutDashboard, LogOut, Moon, Sun } from "lucide-react";
 import Popover from "@/components/shared/popover";
 import Image from "next/image";
 import { Session } from "next-auth";
 import {
   DropdownMenu,
-  DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import * as React from "react";
 
 export default function UserDropdown({ session }: { session: Session }) {
   // console.log("session", session)
   const { email, image } = session?.user || {};
   const [openPopover, setOpenPopover] = useState(false);
-  
+
   return (
     <div className="relative inline-block text-left">
       {/*<Popover*/}
@@ -73,25 +74,27 @@ export default function UserDropdown({ session }: { session: Session }) {
           {/*  <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />*/}
           {/*  <span className="sr-only">Toggle theme</span>*/}
           {/*</Button>*/}
-            <button
-              onClick={() => setOpenPopover(!openPopover)}
-              className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
-            >
-              <Image
-                alt={email || "User"}
-                src={image || `https://avatars.dicebear.com/api/micah/${email}.svg`}
-                width={40}
-                height={40}
-              />
-            </button>
+          <button
+            onClick={() => setOpenPopover(!openPopover)}
+            className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
+          >
+            <Image
+              alt={email || "User"}
+              src={
+                image || `https://avatars.dicebear.com/api/micah/${email}.svg`
+              }
+              width={40}
+              height={40}
+            />
+          </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>
             {/*<Button onClick={() => signOut()}>*/}
-              <LogOut className="mr-2 h-4 w-4"  />
-              <span>Logout</span>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Logout</span>
             {/*</Button>*/}
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -19,49 +19,49 @@
 //     // });
 // }
 
-import {NextRequest, NextResponse} from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 // export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
-    console.time("quiz")
+  console.time("quiz");
 
-    const { name, words } = await req.json();
-    const session = await getServerSession(authOptions) as any;
-    // console.log(session)
+  const { name, words } = await req.json();
+  const session = (await getServerSession(authOptions)) as any;
+  // console.log(session)
 
-    if (!session) {
-        return NextResponse.json("Unauthorized", {
-            status: 401
-        })
-    }
-
-    console.log(session.user.id)
-    const newQuiz = await prisma.quiz.create({
-        data: {
-            name,
-            words: {
-                create: words
-            },
-            user: {
-                connect: {
-                    id: session.user.id
-                }
-            }
-        }
+  if (!session) {
+    return NextResponse.json("Unauthorized", {
+      status: 401,
     });
+  }
 
-    console.timeEnd("quiz")
+  console.log(session.user.id);
+  const newQuiz = await prisma.quiz.create({
+    data: {
+      name,
+      words: {
+        create: words,
+      },
+      user: {
+        connect: {
+          id: session.user.id,
+        },
+      },
+    },
+  });
 
-    return NextResponse.json(newQuiz)
-    // return NextResponse.json({})
+  console.timeEnd("quiz");
+
+  return NextResponse.json(newQuiz);
+  // return NextResponse.json({})
 }
 
 export async function GET() {
-    const quizzes = await prisma.quiz.findMany();
-    return NextResponse.json(quizzes)
+  const quizzes = await prisma.quiz.findMany();
+  return NextResponse.json(quizzes);
 }

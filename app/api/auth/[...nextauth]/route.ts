@@ -1,4 +1,4 @@
-import NextAuth, {AuthOptions as NextAuthOptions} from "next-auth";
+import NextAuth, { AuthOptions as NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import GoogleProvider from "next-auth/providers/google";
@@ -13,8 +13,8 @@ export const authOptions: NextAuthOptions = {
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string
-    })
+      clientSecret: process.env.GITHUB_SECRET as string,
+    }),
   ],
   // callbacks: {
   //   jwt({ token, account, user }) {
@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
 };
 
