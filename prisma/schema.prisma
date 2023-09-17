@@ -53,6 +53,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   quizzes       Quiz[]
+  Skill         Skill[]
 }
 
 model VerificationToken {
@@ -64,11 +65,12 @@ model VerificationToken {
 }
 
 model QuizWord {
-  id         String @id @default(cuid())
+  id         String  @id @default(cuid())
   term       String
   definition String
-  quiz       Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quiz       Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
   quizId     String
+  Skill      Skill[]
 }
 
 model Quiz {
@@ -77,4 +79,13 @@ model Quiz {
   words  QuizWord[]
   user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  quizWord    QuizWord @relation(fields: [quizWordId], references: [id], onDelete: Cascade)
+  quizWordId  String
+  proficiency Int
 }
