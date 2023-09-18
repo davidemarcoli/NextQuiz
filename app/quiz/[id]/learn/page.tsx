@@ -20,7 +20,7 @@ async function getQuizWithWords(
     // });
 
     console.log(`Getting quiz with id ${id}`);
-    return await fetch("/api/quiz/" + id, {
+    return await fetch("/api/quiz/" + id + "/sorted", {
         method: "GET",
         cache: "no-cache",
     }).then((value) => {
@@ -194,23 +194,23 @@ export default function Page({params}: {
         }
     }
 
-    function sortWordsByProficiency() {
-        // sort words by proficiency
-        console.log("sortWordsByProficiency", skills)
-        const sortedWords = fullQuiz?.words.sort((a, b) => {
-            const aSkill = skills.find((skill) => skill.quizWordId === a.id);
-            const bSkill = skills.find((skill) => skill.quizWordId === b.id);
-
-            if (!aSkill && bSkill && bSkill.proficiency > 0) return 1;
-            if (aSkill && !bSkill && aSkill.proficiency > 0) return -1;
-            if (!aSkill || !bSkill) return 0;
-
-            return aSkill!.proficiency - bSkill!.proficiency;
-        });
-        console.log("sortedWords", sortedWords);
-        // @ts-ignore
-        setFullQuiz({...fullQuiz, words: sortedWords || []});
-    }
+    // function sortWordsByProficiency() {
+    //     // sort words by proficiency
+    //     console.log("sortWordsByProficiency", skills)
+    //     const sortedWords = fullQuiz?.words.sort((a, b) => {
+    //         const aSkill = skills.find((skill) => skill.quizWordId === a.id);
+    //         const bSkill = skills.find((skill) => skill.quizWordId === b.id);
+    //
+    //         if (!aSkill && bSkill && bSkill.proficiency > 0) return 1;
+    //         if (aSkill && !bSkill && aSkill.proficiency > 0) return -1;
+    //         if (!aSkill || !bSkill) return 0;
+    //
+    //         return aSkill!.proficiency - bSkill!.proficiency;
+    //     });
+    //     console.log("sortedWords", sortedWords);
+    //     // @ts-ignore
+    //     setFullQuiz({...fullQuiz, words: sortedWords || []});
+    // }
 
     return (
         <>
@@ -230,7 +230,7 @@ export default function Page({params}: {
                 <CardFooter>
                     <Button className="mr-4" onClick={checkAnswer}>Check</Button>
                     <Button className="mr-4" onClick={() => changeCard(1)}>Skip</Button>
-                    <Button onClick={sortWordsByProficiency}>Sort</Button>
+                    {/*<Button onClick={sortWordsByProficiency}>Sort</Button>*/}
                 </CardFooter>
             </Card>
         </>
