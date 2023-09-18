@@ -49,8 +49,8 @@ async function sortQUizWordsBySkills(quiz: Quiz & { words: QuizWord[] }) {
         const skillA = skills.find(skill => skill.quizWordId === a.id);
         const skillB = skills.find(skill => skill.quizWordId === b.id);
 
-        if (!skillA && skillB && skillB.proficiency > 0) return 1;
-        if (skillA && !skillB && skillA.proficiency > 0) return -1;
+        if (!skillA && skillB && skillB.proficiency > 0) return -1;
+        if (skillA && !skillB && skillA.proficiency > 0) return 1;
         if (!skillA || !skillB) return 0;
 
         return skillA!.proficiency - skillB!.proficiency;

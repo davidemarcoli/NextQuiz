@@ -39,6 +39,17 @@ async function getAllSkills(id: string): Promise<Skill[]> {
     });
 }
 
+function getPercentComplete(quizWords: QuizWord[], skills: Skill[]) {
+    let totalProficiency = 0;
+    for (const quizWord of quizWords) {
+        const skill = skills.find((skill) => skill.quizWordId === quizWord.id);
+        if (skill) {
+            totalProficiency += Math.max(Math.min(skill.proficiency, 0), 5);
+        }
+    }
+    return totalProficiency / (quizWords.length * 5);
+}
+
 // function WordCard({cardData, isFlipped}: { cardData: QuizWord, isFlipped: boolean }) {
 //     return (
 //         // <div className="card">test</div>
@@ -113,6 +124,8 @@ export default function Page({params}: {
         } else {
             setCurrentCard(currentCard + indexChange);
         }
+        setCurrentInput("")
+        setTimesTried(0)
     }
 
     function checkAnswer() {
@@ -230,6 +243,7 @@ export default function Page({params}: {
                 <CardFooter>
                     <Button className="mr-4" onClick={checkAnswer}>Check</Button>
                     <Button className="mr-4" onClick={() => changeCard(1)}>Skip</Button>
+                    <p>{(getPercentComplete(fullQuiz.words, skills) * 100).toFixed(2)}% Complete</p>
                     {/*<Button onClick={sortWordsByProficiency}>Sort</Button>*/}
                 </CardFooter>
             </Card>
