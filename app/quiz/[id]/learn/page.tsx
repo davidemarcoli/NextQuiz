@@ -44,7 +44,7 @@ function getPercentComplete(quizWords: QuizWord[], skills: Skill[]) {
     for (const quizWord of quizWords) {
         const skill = skills.find((skill) => skill.quizWordId === quizWord.id);
         if (skill) {
-            totalProficiency += Math.max(Math.min(skill.proficiency, 0), 5);
+            totalProficiency += Math.min(Math.max(skill.proficiency, 0), 5)
         }
     }
     return totalProficiency / (quizWords.length * 5);
@@ -128,11 +128,50 @@ export default function Page({params}: {
         setTimesTried(0)
     }
 
+    // function checkAnswer() {
+    //     const trimmedInput = currentInput.trim();
+    //     console.log("checkAnswer", trimmedInput, fullQuiz!.words[currentCard].term)
+    //
+    //     if (trimmedInput === fullQuiz!.words[currentCard].term) {
+    //         console.log("Correct!");
+    //         toasts.toast({
+    //             title: "Correct!",
+    //             description: "You got it right!",
+    //             className: cn(
+    //                 'bottom-0 right-0 flex fixed md:max-w-[420px] md:bottom-4 md:right-4'
+    //             ),
+    //         })
+    //         setCurrentInput("")
+    //         changeCard(1);
+    //         updateSkill(1);
+    //         setTimesTried(0)
+    //     } else {
+    //         console.log("Incorrect!");
+    //         toasts.toast({
+    //             title: "Incorrect!",
+    //             description: "You got it wrong!",
+    //             className: cn(
+    //                 'bottom-0 right-0 flex fixed md:max-w-[420px] md:bottom-4 md:right-4'
+    //             ),
+    //         });
+    //         updateSkill(-1);
+    //         setTimesTried(timesTried + 1);
+    //     }
+    // }
+
     function checkAnswer() {
         const trimmedInput = currentInput.trim();
-        console.log("checkAnswer", trimmedInput, fullQuiz!.words[currentCard].term)
+        console.log("checkAnswer", trimmedInput, fullQuiz!.words[currentCard].term);
 
-        if (trimmedInput === fullQuiz!.words[currentCard].term) {
+        // Split the answers and input by comma and trim spaces
+        const correctAnswers = fullQuiz!.words[currentCard].term.split(',').map(s => s.trim());
+        const providedAnswers = trimmedInput.split(',').map(s => s.trim());
+
+        // Check if every provided answer exists in the correct answers and they have the same length
+        const isCorrect = providedAnswers.every(answer => correctAnswers.includes(answer))
+            && providedAnswers.length === correctAnswers.length;
+
+        if (isCorrect) {
             console.log("Correct!");
             toasts.toast({
                 title: "Correct!",
@@ -140,11 +179,11 @@ export default function Page({params}: {
                 className: cn(
                     'bottom-0 right-0 flex fixed md:max-w-[420px] md:bottom-4 md:right-4'
                 ),
-            })
-            setCurrentInput("")
+            });
+            setCurrentInput("");
             changeCard(1);
             updateSkill(1);
-            setTimesTried(0)
+            setTimesTried(0);
         } else {
             console.log("Incorrect!");
             toasts.toast({
@@ -159,12 +198,14 @@ export default function Page({params}: {
         }
     }
 
+
     async function updateSkill(correction: number) {
         if (timesTried > 0) return;
 
         const currentSkill = skills.filter((skill) => skill.quizWordId === fullQuiz?.words[currentCard].id)[0];
         console.log("currentSkill", currentSkill);
         if (currentSkill) {
+            if (currentSkill.proficiency + correction > 5 || currentSkill.proficiency + correction < 0) return
             const newSkill = await fetch("/api/quiz/" + params.id + "/skill/" + currentSkill.id, {
                 method: "PATCH",
                 cache: "no-cache",
@@ -230,6 +271,7 @@ export default function Page({params}: {
             <Card>
                 <CardHeader>
                     <CardTitle>{fullQuiz.words[currentCard].definition}</CardTitle>
+                    {timesTried > 0 && <CardTitle>{fullQuiz.words[currentCard].term}</CardTitle>}
                 </CardHeader>
                 <CardContent>
                     <p className="mb-2">Your
