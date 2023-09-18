@@ -70,7 +70,7 @@ export default function CreateQuiz() {
 
     // formData.csvWords is a csv string which is split by a tab
     // each line is a word and its definition
-    const lines = values.csvWords.split("\n");
+    const lines = values.csvWords.trim().split("\n").map(line => line.trim());
     console.log(lines);
     const words = lines.map((line: string) => {
       const [term, definition] = line.split(values.separator);

@@ -116,8 +116,10 @@ export default function Page({params}: {
     }
 
     function checkAnswer() {
-        console.log("checkAnswer", currentInput, fullQuiz!.words[currentCard].term)
-        if (currentInput === fullQuiz!.words[currentCard].term) {
+        const trimmedInput = currentInput.trim();
+        console.log("checkAnswer", trimmedInput, fullQuiz!.words[currentCard].term)
+
+        if (trimmedInput === fullQuiz!.words[currentCard].term) {
             console.log("Correct!");
             toasts.toast({
                 title: "Correct!",
