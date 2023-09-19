@@ -45,15 +45,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   quizzes       Quiz[]
   Skill         Skill[]
+  LearnedWord   LearnedWord[]
 }
 
 model VerificationToken {
@@ -65,12 +66,13 @@ model VerificationToken {
 }
 
 model QuizWord {
-  id         String  @id @default(cuid())
-  term       String
-  definition String
-  quiz       Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  quizId     String
-  Skill      Skill[]
+  id          String        @id @default(cuid())
+  term        String
+  definition  String
+  quiz        Quiz          @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId      String
+  Skill       Skill[]
+  LearnedWord LearnedWord[]
 }
 
 model Quiz {
@@ -88,4 +90,15 @@ model Skill {
   quizWord    QuizWord @relation(fields: [quizWordId], references: [id], onDelete: Cascade)
   quizWordId  String
   proficiency Int
+}
+
+model LearnedWord {
+  id         String   @id @default(cuid())
+  learned    Boolean
+  userId     String
+  quizWordId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizWord   QuizWord @relation(fields: [quizWordId], references: [id], onDelete: Cascade)
+
+  @@index([userId, quizWordId])
 }

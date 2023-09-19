@@ -1,21 +1,17 @@
 "use client";
 
-import { Quiz, QuizWord } from "@prisma/client";
+import {LearnedWord, Quiz, QuizWord} from "@prisma/client";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Shuffle } from "lucide-react";
 import { timeout } from "rxjs";
+import { useSwipeable } from "react-swipeable";
+import { useSession } from "next-auth/react";
 
 async function getQuizWithWords(
   id: string,
 ): Promise<(Quiz & { words: QuizWord[] }) | null> {
-  // return await prisma.quiz.findFirst({
-  //     where: {id: id}, include: {
-  //         words: true
-  //     }
-  // });
-
   console.log(`Getting quiz with id ${id}`);
   return await fetch("/api/quiz/" + id, {
     method: "GET",
@@ -24,6 +20,29 @@ async function getQuizWithWords(
     console.log("value", value.ok);
     return value.json();
   });
+}
+
+async function getLearnedWords(
+    id: string,
+): Promise<LearnedWord[] | null> {
+    console.log(`Getting learned words with id ${id}`);
+    return await fetch("/api/quiz/" + id + "/learned", {
+        method: "GET",
+        cache: "no-cache",
+    }).then((value) => {
+        console.log("value", value.ok);
+        return value.json();
+    });
+}
+
+async function getSession() {
+    return await fetch("/api/auth/session", {
+        method: "GET",
+        cache: "no-cache",
+    }).then((value) => {
+        console.log("value", value.ok);
+        return value.json();
+    });
 }
 
 // function WordCard({cardData, isFlipped}: { cardData: QuizWord, isFlipped: boolean }) {
@@ -46,13 +65,30 @@ export default function Page({ params }: { params: { id: string } }) {
     console.log(params)
     * */
 
+    let swipeHandlers = useSwipeable({
+        onSwiped: (eventData) => console.log("User Swiped!", eventData),
+        onSwipedLeft: (eventData) => {
+            console.log("User Swiped Left!", eventData)
+            updateLearnedWord(false);
+            changeCard(1)
+        },
+        onSwipedRight: (eventData) => {
+            console.log("User Swiped Right!", eventData)
+            updateLearnedWord(true);
+            changeCard(1);
+        },
+        swipeDuration: 250 // only swipes under 250ms will trigger callbacks
+    });
+
   const [currentCard, setCurrentCard] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [fullQuiz, setFullQuiz] = useState<
     (Quiz & { words: QuizWord[] }) | null
   >(null);
+  const [learnedWords, setLearnedWords] = useState<LearnedWord[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [animateFlip, setAnimateFlip] = useState(true);
+  const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
     console.log("useEffect", params.id);
@@ -65,9 +101,25 @@ export default function Page({ params }: { params: { id: string } }) {
       .catch((reason) => {
         console.log("reason", reason);
       });
+    getLearnedWords(params.id)
+        .then((value) => {
+            console.log("value 3", value);
+            setLearnedWords(value || []);
+        })
+        .catch((reason) => {
+            console.log("reason", reason);
+        });
+    getSession()
+        .then((value) => {
+            console.log("value 4", value);
+            if (value && value.user)
+                setSession(value);
+        })
+        .catch((reason) => {
+            console.log("reason", reason);
+        });
   }, []);
 
-  console.log(isLoading);
   if (isLoading) return <p>Loading...</p>;
   if (!fullQuiz) return <p>Quiz Words not found</p>;
 
@@ -85,6 +137,56 @@ export default function Page({ params }: { params: { id: string } }) {
     }
   }
 
+  async function updateLearnedWord(correct: boolean) {
+      const currentLearnedWord = learnedWords.find((learnedWord) => learnedWord.quizWordId === fullQuiz?.words[currentCard].id);
+      console.log("currentSkill", currentLearnedWord);
+      if (currentLearnedWord) {
+          const newLearnedWord = await fetch("/api/quiz/" + params.id + "/learned/" + currentLearnedWord.id, {
+              method: "PATCH",
+              cache: "no-cache",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                 learned: correct,
+              }),
+          }).then((value) => {
+              console.log("value", value.ok);
+              return value.json();
+          });
+
+
+      } else {
+          console.log("new skill")
+          const newLearnedWord = await fetch("/api/quiz/" + params.id + "/learned", {
+              method: "POST",
+              cache: "no-cache",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                  quizWordId: fullQuiz?.words[currentCard].id,
+                  learned: false,
+              }),
+          }).then((value) => {
+              console.log("value", value.ok);
+              return value.json();
+          });
+
+          setLearnedWords([...learnedWords, newLearnedWord])
+      }
+  }
+
+  function getLearnedStatus() {
+        const currentLearnedWord = learnedWords.find((learnedWord) => learnedWord.quizWordId === fullQuiz?.words[currentCard].id);
+        console.log("currentSkill", currentLearnedWord);
+        if (currentLearnedWord) {
+            return currentLearnedWord.learned ? "Learned" : "Not yet learned";
+        } else {
+            return "Not yet seen";
+        }
+  }
+
   return (
     <>
       <h1 className={"text-3xl"}>{fullQuiz.name}</h1>
@@ -94,6 +196,7 @@ export default function Page({ params }: { params: { id: string } }) {
           setIsFlipped(!isFlipped);
           setAnimateFlip(true); // Enable flip animation
         }}
+        {...(session ? swipeHandlers : {})}
       >
         {/*<WordCard cardData={fullQuiz.words[currentCard]} isFlipped={isFlipped}/>*/}
         <Card
@@ -139,9 +242,12 @@ export default function Page({ params }: { params: { id: string } }) {
           animateFlip && setAnimateFlip(false);
         }}
       >
-        <Shuffle className="mr-2 h-4 w-4" />
+        <Shuffle className="mr-2 h-3 w-3" />
         Shuffle Words
       </Button>
+        {session && <span className={`font-bold ${
+            getLearnedStatus() === "Learned" ? "text-green-500" : getLearnedStatus() === "Not yet learned" ? "text-red-500" : ""
+        }`}>{getLearnedStatus()}</span>}
     </>
   );
 }

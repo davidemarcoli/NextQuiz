@@ -202,7 +202,7 @@ export default function Page({params}: {
     async function updateSkill(correction: number) {
         if (timesTried > 0) return;
 
-        const currentSkill = skills.filter((skill) => skill.quizWordId === fullQuiz?.words[currentCard].id)[0];
+        const currentSkill = skills.find((skill) => skill.quizWordId === fullQuiz?.words[currentCard].id);
         console.log("currentSkill", currentSkill);
         if (currentSkill) {
             if (currentSkill.proficiency + correction > 5 || currentSkill.proficiency + correction < 0) return
