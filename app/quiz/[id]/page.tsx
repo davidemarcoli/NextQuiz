@@ -89,11 +89,10 @@ async function ShowQuiz({ params }: { params: { id: string } }) {
             // </div>
             <Card key={word.id}>
               <CardHeader>
-                <CardTitle>{word.id}</CardTitle>
+                <CardTitle>{word.term}</CardTitle>
                 {/*<CardDescription>Card Description</CardDescription>*/}
               </CardHeader>
               <CardContent>
-                <p>{word.term}</p>
                 <p>{word.definition}</p>
               </CardContent>
               {/*<CardFooter>*/}
