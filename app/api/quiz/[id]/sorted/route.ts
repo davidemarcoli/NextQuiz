@@ -26,7 +26,6 @@ export async function GET(
 
     const sortedQuiz = await sortQUizWordsBySkills(quiz);
 
-    console.log("loaded quiz with id: " + id);
     return NextResponse.json(sortedQuiz);
 }
 

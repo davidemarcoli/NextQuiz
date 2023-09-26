@@ -19,12 +19,10 @@ async function getQuizWithWords(
     //     }
     // });
 
-    console.log(`Getting quiz with id ${id}`);
     return await fetch("/api/quiz/" + id + "/sorted", {
         method: "GET",
         cache: "no-cache",
     }).then((value) => {
-        console.log("value", value.ok);
         return value.json();
     });
 }
@@ -34,7 +32,6 @@ async function getAllSkills(id: string): Promise<Skill[]> {
         method: "GET",
         cache: "no-cache",
     }).then((value) => {
-        console.log("value", value.ok);
         return value.json();
     });
 }
@@ -89,25 +86,21 @@ export default function Page({params}: {
     const [isSorted, setIsSorted] = useState(false);
 
     useEffect(() => {
-        console.log("useEffect", params.id);
-
         getQuizWithWords(params.id)
             .then((value) => {
-                console.log("quiz value", value);
                 setFullQuiz(value);
                 setLoading(false);
             })
             .catch((reason) => {
-                console.log("quiz reason", reason);
+                console.error("quiz reason", reason);
             });
 
         getAllSkills(params.id)
             .then((value) => {
-                console.log("skill value", value);
                 setSkills(value);
             })
             .catch((reason) => {
-                console.log("skill reason", reason);
+                console.error("skill reason", reason);
             });
     }, []);
 
@@ -116,7 +109,6 @@ export default function Page({params}: {
     if (!fullQuiz) return <p>Quiz Words not found</p>;
 
     function changeCard(indexChange: number) {
-        console.log("changeCard", indexChange);
         if (currentCard + indexChange < 0) {
             setCurrentCard(fullQuiz!.words.length - 1);
         } else if (currentCard + indexChange >= fullQuiz!.words.length) {
@@ -161,7 +153,6 @@ export default function Page({params}: {
 
     function checkAnswer() {
         const trimmedInput = currentInput.trim();
-        console.log("checkAnswer", trimmedInput, fullQuiz!.words[currentCard].term);
 
         // Split the answers and input by comma and trim spaces
         const correctAnswers = fullQuiz!.words[currentCard].term.split(',').map(s => s.trim());
@@ -172,7 +163,6 @@ export default function Page({params}: {
             && providedAnswers.length === correctAnswers.length;
 
         if (isCorrect) {
-            console.log("Correct!");
             toasts.toast({
                 title: "Correct!",
                 description: "You got it right!",
@@ -185,7 +175,6 @@ export default function Page({params}: {
             updateSkill(1);
             setTimesTried(0);
         } else {
-            console.log("Incorrect!");
             toasts.toast({
                 title: "Incorrect!",
                 description: "You got it wrong!",
@@ -203,7 +192,6 @@ export default function Page({params}: {
         if (timesTried > 0) return;
 
         const currentSkill = skills.find((skill) => skill.quizWordId === fullQuiz?.words[currentCard].id);
-        console.log("currentSkill", currentSkill);
         if (currentSkill) {
             if (currentSkill.proficiency + correction > 5 || currentSkill.proficiency + correction < 0) return
             const newSkill = await fetch("/api/quiz/" + params.id + "/skill/" + currentSkill.id, {
@@ -216,7 +204,6 @@ export default function Page({params}: {
                     proficiency: currentSkill.proficiency + correction,
                 }),
             }).then((value) => {
-                console.log("value", value.ok);
                 return value.json();
             });
 
@@ -228,7 +215,6 @@ export default function Page({params}: {
                 }
             }));
         } else {
-            console.log("new skill")
             const newSkill = await fetch("/api/quiz/" + params.id + "/skill", {
                 method: "POST",
                 cache: "no-cache",
@@ -240,7 +226,6 @@ export default function Page({params}: {
                     proficiency: correction > 0 ? 1 : 0,
                 }),
             }).then((value) => {
-                console.log("value", value.ok);
                 return value.json();
             });
 

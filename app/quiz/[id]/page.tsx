@@ -1,4 +1,4 @@
-import {LearnedWord, Quiz, QuizWord} from "@prisma/client";
+import {LearnedWord, Quiz, QuizWord, User} from "@prisma/client";
 import prisma from "@/lib/prisma";
 import {Suspense} from "react";
 import {Card, CardContent, CardHeader, CardTitle,} from "@/components/ui/card";
@@ -7,37 +7,23 @@ import Link from "next/link";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 
-async function getQuiz(id: string): Promise<Quiz | null> {
-    console.log(`Getting small quiz with id ${id}`);
-    return await prisma.quiz.findFirst({where: {id: id}});
+async function getQuiz(id: string): Promise<Quiz & {user: User} | null> {
+    return await prisma.quiz.findFirst({where: {id: id}, include: {user: true}});
 }
 
 async function getQuizWithWords(
     id: string,
 ): Promise<(Quiz & { words: QuizWord[] }) | null> {
-    // return await prisma.quiz.findFirst({
-    //     where: {id: id}, include: {
-    //         words: true
-    //     }
-    // });
-
-    console.log(`Getting quiz with id ${id}`);
-
-    console.time("quiz");
     const quiz = await prisma.quiz.findFirst({
         where: {id: id},
         include: {
             words: true,
         },
     });
-    console.timeEnd("quiz");
-    console.log(`This quiz has ${quiz?.words.length} words`);
     return quiz;
 }
 
 async function getLearnedWords(quizId: string, userId: string): Promise<LearnedWord[] | null> {
-    console.log(`Getting learned words with id ${quizId}`);
-
     return await prisma.learnedWord.findMany({
         where: {
             quizWord: {
@@ -49,7 +35,6 @@ async function getLearnedWords(quizId: string, userId: string): Promise<LearnedW
 }
 
 export default async function Page({params}: { params: { id: string } }) {
-    console.log(params);
     const quiz = await getQuiz(params.id);
 
     if (!quiz) {
@@ -58,7 +43,7 @@ export default async function Page({params}: { params: { id: string } }) {
 
     return (
         <>
-            <h1 className={"text-3xl mb-2"}>{quiz.name}</h1>
+            <h1 className={"text-3xl mb-2"}>{quiz.name}<span className="text-sm ml-2">by {quiz.user.name}</span></h1>
             <Suspense fallback={<div>Loading Words...</div>}>
                 {/* @ts-expect-error Server Component */}
                 <ShowQuiz params={params}/>
@@ -70,9 +55,7 @@ export default async function Page({params}: { params: { id: string } }) {
 async function ShowQuiz({params}: { params: { id: string } }) {
     const session = await getServerSession(authOptions)
     const fullQuiz = await getQuizWithWords(params.id);
-    console.log("session", session)
     const learnedWords = await getLearnedWords(params.id, session?.user?.id || "");
-    console.log("learnedWords", learnedWords)
 
     const allWords = fullQuiz?.words || [];
     const groupedWords = {

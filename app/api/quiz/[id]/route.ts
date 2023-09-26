@@ -14,8 +14,8 @@ export async function GET(
     },
     include: {
       words: true,
+      user: true
     },
   });
-  console.log("loaded quiz with id: " + id);
   return NextResponse.json(quiz);
 }

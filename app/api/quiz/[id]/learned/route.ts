@@ -29,9 +29,6 @@ export async function POST(req: NextRequest) {
     const {quizWordId, learned} = await req.json();
     const session = (await getServerSession(authOptions)) as any;
 
-    console.log(quizWordId, learned)
-    console.log(session?.user?.id)
-
     const newLearnedWord = await prisma.learnedWord.create({
         data: {
             quizWord: {
@@ -48,8 +45,6 @@ export async function POST(req: NextRequest) {
             }
         }
     })
-
-    console.log(newLearnedWord)
 
     return NextResponse.json(newLearnedWord);
 }

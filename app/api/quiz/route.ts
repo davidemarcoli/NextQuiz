@@ -28,11 +28,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 // export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
-  console.time("quiz");
-
   const { name, words } = await req.json();
   const session = (await getServerSession(authOptions)) as any;
-  // console.log(session)
 
   if (!session) {
     return NextResponse.json("Unauthorized", {
@@ -40,7 +37,6 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  console.log(session.user.id);
   const newQuiz = await prisma.quiz.create({
     data: {
       name,
@@ -55,10 +51,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  console.timeEnd("quiz");
-
   return NextResponse.json(newQuiz);
-  // return NextResponse.json({})
 }
 
 export async function GET() {

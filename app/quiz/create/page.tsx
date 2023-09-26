@@ -58,7 +58,6 @@ export default function CreateQuiz() {
   // }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
 
     // parse seperator
     values.separator =
@@ -71,7 +70,6 @@ export default function CreateQuiz() {
     // formData.csvWords is a csv string which is split by a tab
     // each line is a word and its definition
     const lines = values.csvWords.trim().split("\n").map(line => line.trim());
-    console.log(lines);
     const words = lines.map((line: string) => {
       const [term, definition] = line.split(values.separator);
       return {
@@ -94,7 +92,6 @@ export default function CreateQuiz() {
     })
       .then((r) => r.json())
       .then((r) => {
-        console.log(r);
         toast({
           title: "Quiz created",
           description: "Your quiz has been created",

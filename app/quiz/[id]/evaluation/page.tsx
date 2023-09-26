@@ -16,18 +16,10 @@ import {
 async function getQuizWithWords(
     id: string,
 ): Promise<(Quiz & { words: QuizWord[] }) | null> {
-    // return await prisma.quiz.findFirst({
-    //     where: {id: id}, include: {
-    //         words: true
-    //     }
-    // });
-
-    console.log(`Getting quiz with id ${id}`);
     return await fetch("/api/quiz/" + id, {
         method: "GET",
         cache: "no-cache",
     }).then((value) => {
-        console.log("value", value.ok);
         return value.json();
     });
 }
@@ -37,7 +29,6 @@ async function getAllSkills(id: string): Promise<Skill[]> {
         method: "GET",
         cache: "no-cache",
     }).then((value) => {
-        console.log("value", value.ok);
         return value.json();
     });
 }
@@ -74,25 +65,21 @@ export default function Page({params}: { params: { id: string } }) {
     const [timesTried, setTimesTried] = useState(0);
 
     useEffect(() => {
-        console.log("useEffect", params.id);
-
         getQuizWithWords(params.id)
             .then((value) => {
-                console.log("quiz value", value);
                 setFullQuiz(value);
                 setLoading(false);
             })
             .catch((reason) => {
-                console.log("quiz reason", reason);
+                console.error("quiz reason", reason);
             });
 
         getAllSkills(params.id)
             .then((value) => {
-                console.log("skill value", value);
                 setSkills(value);
             })
             .catch((reason) => {
-                console.log("skill reason", reason);
+                console.error("skill reason", reason);
             });
     }, []);
 

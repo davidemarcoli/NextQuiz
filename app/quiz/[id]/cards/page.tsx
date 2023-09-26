@@ -1,36 +1,30 @@
 "use client";
 
-import {LearnedWord, Quiz, QuizWord} from "@prisma/client";
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Shuffle } from "lucide-react";
-import { timeout } from "rxjs";
-import { useSwipeable } from "react-swipeable";
-import { useSession } from "next-auth/react";
+import {LearnedWord, Quiz, QuizWord, User} from "@prisma/client";
+import {useEffect, useState} from "react";
+import {Card, CardTitle} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
+import {Shuffle} from "lucide-react";
+import {useSwipeable} from "react-swipeable";
 
 async function getQuizWithWords(
-  id: string,
-): Promise<(Quiz & { words: QuizWord[] }) | null> {
-  console.log(`Getting quiz with id ${id}`);
-  return await fetch("/api/quiz/" + id, {
-    method: "GET",
-    cache: "no-cache",
-  }).then((value) => {
-    console.log("value", value.ok);
-    return value.json();
-  });
+    id: string,
+): Promise<(Quiz & { words: QuizWord[], user: User }) | null> {
+    return await fetch("/api/quiz/" + id, {
+        method: "GET",
+        cache: "no-cache",
+    }).then((value) => {
+        return value.json();
+    });
 }
 
 async function getLearnedWords(
     id: string,
 ): Promise<LearnedWord[] | null> {
-    console.log(`Getting learned words with id ${id}`);
     return await fetch("/api/quiz/" + id + "/learned", {
         method: "GET",
         cache: "no-cache",
     }).then((value) => {
-        console.log("value", value.ok);
         return value.json();
     });
 }
@@ -38,9 +32,7 @@ async function getLearnedWords(
 async function getSession() {
     return await fetch("/api/auth/session", {
         method: "GET",
-        cache: "no-cache",
     }).then((value) => {
-        console.log("value", value.ok);
         return value.json();
     });
 }
@@ -60,10 +52,7 @@ async function getSession() {
 //     );
 // }
 
-export default function Page({ params }: { params: { id: string } }) {
-  /*export default async function Cards({params}: any) {
-    console.log(params)
-    * */
+export default function Page({params}: { params: { id: string } }) {
 
     let swipeHandlers = useSwipeable({
         onSwiped: (eventData) => console.log("User Swiped!", eventData),
@@ -80,174 +69,164 @@ export default function Page({ params }: { params: { id: string } }) {
         swipeDuration: 250 // only swipes under 250ms will trigger callbacks
     });
 
-  const [currentCard, setCurrentCard] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [fullQuiz, setFullQuiz] = useState<
-    (Quiz & { words: QuizWord[] }) | null
-  >(null);
-  const [learnedWords, setLearnedWords] = useState<LearnedWord[]>([]);
-  const [isLoading, setLoading] = useState(true);
-  const [animateFlip, setAnimateFlip] = useState(true);
-  const [session, setSession] = useState<any>(null);
+    const [currentCard, setCurrentCard] = useState(0);
+    const [isFlipped, setIsFlipped] = useState(false);
+    const [fullQuiz, setFullQuiz] = useState<
+        (Quiz & { words: QuizWord[], user: User }) | null
+    >(null);
+    const [learnedWords, setLearnedWords] = useState<LearnedWord[]>([]);
+    const [isLoading, setLoading] = useState(true);
+    const [animateFlip, setAnimateFlip] = useState(true);
+    const [session, setSession] = useState<any>(null);
 
-  useEffect(() => {
-    console.log("useEffect", params.id);
-    getQuizWithWords(params.id)
-      .then((value) => {
-        console.log("value 2", value);
-        setFullQuiz(value);
-        setLoading(false);
-      })
-      .catch((reason) => {
-        console.log("reason", reason);
-      });
-    getLearnedWords(params.id)
-        .then((value) => {
-            console.log("value 3", value);
-            setLearnedWords(value || []);
-        })
-        .catch((reason) => {
-            console.log("reason", reason);
-        });
-    getSession()
-        .then((value) => {
-            console.log("value 4", value);
-            if (value && value.user)
-                setSession(value);
-        })
-        .catch((reason) => {
-            console.log("reason", reason);
-        });
-  }, []);
+    useEffect(() => {
+        getQuizWithWords(params.id)
+            .then((value) => {
+                setFullQuiz(value);
+                setLoading(false);
+            })
+            .catch((reason) => {
+                console.error("reason", reason);
+            });
+        getLearnedWords(params.id)
+            .then((value) => {
+                setLearnedWords(value || []);
+            })
+            .catch((reason) => {
+                console.error("reason", reason);
+            });
+        getSession()
+            .then((value) => {
+                if (value && value.user)
+                    setSession(value);
+            })
+            .catch((reason) => {
+                console.error("reason", reason);
+            });
+    }, []);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!fullQuiz) return <p>Quiz Words not found</p>;
+    if (isLoading) return <p>Loading...</p>;
+    if (!fullQuiz) return <p>Quiz Words not found</p>;
 
-  function changeCard(indexChange: number) {
-    setAnimateFlip(false); // Disable flip animation
-    setIsFlipped(false);
+    function changeCard(indexChange: number) {
+        setAnimateFlip(false); // Disable flip animation
+        setIsFlipped(false);
 
-    console.log("changeCard", indexChange);
-    if (currentCard + indexChange < 0) {
-      setCurrentCard(fullQuiz!.words.length - 1);
-    } else if (currentCard + indexChange >= fullQuiz!.words.length) {
-      setCurrentCard(0);
-    } else {
-      setCurrentCard(currentCard + indexChange);
+        if (currentCard + indexChange < 0) {
+            setCurrentCard(fullQuiz!.words.length - 1);
+        } else if (currentCard + indexChange >= fullQuiz!.words.length) {
+            setCurrentCard(0);
+        } else {
+            setCurrentCard(currentCard + indexChange);
+        }
     }
-  }
 
-  async function updateLearnedWord(correct: boolean) {
-      const currentLearnedWord = learnedWords.find((learnedWord) => learnedWord.quizWordId === fullQuiz?.words[currentCard].id);
-      console.log("currentSkill", currentLearnedWord);
-      if (currentLearnedWord) {
-          const newLearnedWord = await fetch("/api/quiz/" + params.id + "/learned/" + currentLearnedWord.id, {
-              method: "PATCH",
-              cache: "no-cache",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                 learned: correct,
-              }),
-          }).then((value) => {
-              console.log("value", value.ok);
-              return value.json();
-          });
-
-
-      } else {
-          console.log("new skill")
-          const newLearnedWord = await fetch("/api/quiz/" + params.id + "/learned", {
-              method: "POST",
-              cache: "no-cache",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                  quizWordId: fullQuiz?.words[currentCard].id,
-                  learned: false,
-              }),
-          }).then((value) => {
-              console.log("value", value.ok);
-              return value.json();
-          });
-
-          setLearnedWords([...learnedWords, newLearnedWord])
-      }
-  }
-
-  function getLearnedStatus() {
+    async function updateLearnedWord(correct: boolean) {
         const currentLearnedWord = learnedWords.find((learnedWord) => learnedWord.quizWordId === fullQuiz?.words[currentCard].id);
-        console.log("currentSkill", currentLearnedWord);
+        if (currentLearnedWord) {
+            const newLearnedWord = await fetch("/api/quiz/" + params.id + "/learned/" + currentLearnedWord.id, {
+                method: "PATCH",
+                cache: "no-cache",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    learned: correct,
+                }),
+            }).then((value) => {
+                return value.json();
+            });
+
+
+        } else {
+            const newLearnedWord = await fetch("/api/quiz/" + params.id + "/learned", {
+                method: "POST",
+                cache: "no-cache",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    quizWordId: fullQuiz?.words[currentCard].id,
+                    learned: false,
+                }),
+            }).then((value) => {
+                return value.json();
+            });
+
+            setLearnedWords([...learnedWords, newLearnedWord])
+        }
+    }
+
+    function getLearnedStatus() {
+        const currentLearnedWord = learnedWords.find((learnedWord) => learnedWord.quizWordId === fullQuiz?.words[currentCard].id);
         if (currentLearnedWord) {
             return currentLearnedWord.learned ? "Learned" : "Not yet learned";
         } else {
             return "Not yet seen";
         }
-  }
+    }
 
-  return (
-    <>
-      <h1 className={"text-3xl"}>{fullQuiz.name}</h1>
-      <div
-        className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2"
-        onClick={() => {
-          setIsFlipped(!isFlipped);
-          setAnimateFlip(true); // Enable flip animation
-        }}
-        {...(session ? swipeHandlers : {})}
-      >
-        {/*<WordCard cardData={fullQuiz.words[currentCard]} isFlipped={isFlipped}/>*/}
-        <Card
-          className={`relative flex h-full w-full select-none items-center justify-center p-8 ${
-            animateFlip
-              ? `transition-all duration-500 [transform-style:preserve-3d] ${
-                  isFlipped
-                    ? "[transform:rotateY(180deg)]"
-                    : "[transform:rotateY(0deg)]"
-                }`
-              : ""
-          }`}
-        >
-          {/*<CardContent>*/}
-          <CardTitle
-            className={"absolute h-fit text-center [transform:rotateY(180deg)]"}
-            style={{ backfaceVisibility: "hidden" }}
-          >
-            {fullQuiz.words[currentCard].term}
-          </CardTitle>
-          <CardTitle
-            className={"absolute h-fit text-center [transform:rotateY(0deg)]"}
-            style={{ backfaceVisibility: "hidden" }}
-          >
-            {fullQuiz.words[currentCard].definition}
-          </CardTitle>
-          {/*</CardContent>*/}
-        </Card>
-      </div>
-      <Button className="mr-4 mt-4" onClick={() => changeCard(-1)}>
-        Previous
-      </Button>
-      <Button className="mr-4 mt-4" onClick={() => changeCard(1)}>
-        Next
-      </Button>
-      <Button
-        className="mr-4 mt-4"
-        onClick={() => {
-          const newQuiz = { ...fullQuiz };
-          newQuiz.words = newQuiz.words.sort(() => Math.random() - 0.5);
-          setFullQuiz(newQuiz);
-          setIsFlipped(false);
-          animateFlip && setAnimateFlip(false);
-        }}
-      >
-        <Shuffle className="mr-2 h-3 w-3" />
-        Shuffle Words
-      </Button>
-        {session && <span className={`font-bold ${
-            getLearnedStatus() === "Learned" ? "text-green-500" : getLearnedStatus() === "Not yet learned" ? "text-red-500" : ""
-        }`}>{getLearnedStatus()}</span>}
-    </>
-  );
+    return (
+        <>
+            <h1 className={"text-3xl mb-2"}>{fullQuiz.name}<span className="text-sm ml-2">by {fullQuiz.user.name}</span></h1>
+            <div
+                className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2"
+                onClick={() => {
+                    setIsFlipped(!isFlipped);
+                    setAnimateFlip(true); // Enable flip animation
+                }}
+                {...(session ? swipeHandlers : {})}
+            >
+                {/*<WordCard cardData={fullQuiz.words[currentCard]} isFlipped={isFlipped}/>*/}
+                <Card
+                    className={`relative flex h-full w-full select-none items-center justify-center p-8 ${
+                        animateFlip
+                            ? `transition-all duration-500 [transform-style:preserve-3d] ${
+                                isFlipped
+                                    ? "[transform:rotateY(180deg)]"
+                                    : "[transform:rotateY(0deg)]"
+                            }`
+                            : ""
+                    }`}
+                >
+                    {/*<CardContent>*/}
+                    <CardTitle
+                        className={"absolute h-fit text-center [transform:rotateY(180deg)]"}
+                        style={{backfaceVisibility: "hidden"}}
+                    >
+                        {fullQuiz.words[currentCard].term}
+                    </CardTitle>
+                    <CardTitle
+                        className={"absolute h-fit text-center [transform:rotateY(0deg)]"}
+                        style={{backfaceVisibility: "hidden"}}
+                    >
+                        {fullQuiz.words[currentCard].definition}
+                    </CardTitle>
+                    {/*</CardContent>*/}
+                </Card>
+            </div>
+            <Button className="mr-4 mt-4" onClick={() => changeCard(-1)}>
+                Previous
+            </Button>
+            <Button className="mr-4 mt-4" onClick={() => changeCard(1)}>
+                Next
+            </Button>
+            <Button
+                className="mr-4 mt-4"
+                onClick={() => {
+                    const newQuiz = {...fullQuiz};
+                    newQuiz.words = newQuiz.words.sort(() => Math.random() - 0.5);
+                    setFullQuiz(newQuiz);
+                    setIsFlipped(false);
+                    animateFlip && setAnimateFlip(false);
+                }}
+            >
+                <Shuffle className="mr-2 h-3 w-3"/>
+                Shuffle Words
+            </Button>
+            {session && <span className={`font-bold ${
+                getLearnedStatus() === "Learned" ? "text-green-500" : getLearnedStatus() === "Not yet learned" ? "text-red-500" : ""
+            }`}>{getLearnedStatus()}</span>}
+        </>
+    );
 }
