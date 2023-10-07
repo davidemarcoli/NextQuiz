@@ -81,7 +81,6 @@ export function CommandMenu() {
                         <span>Quiz List</span>
                     </CommandItem>
                 </CommandGroup>
-                <CommandSeparator/>
                 <CommandGroup heading="Quizzes">
                     {quizzes.map((quiz) => (
                         <CommandItem key={quiz.id} onSelect={() => navigate(`/quiz/${quiz.id}`)}>

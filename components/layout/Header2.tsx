@@ -71,11 +71,11 @@ const Header = ({ session }: { session: Session | null }) => {
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const routes = [
     {
-      href: "quiz/create",
+      href: "/quiz/create",
       label: "Create Quiz",
     },
     {
-      href: "quiz/list",
+      href: "/quiz/list",
       label: "Quiz List",
     },
   ];
