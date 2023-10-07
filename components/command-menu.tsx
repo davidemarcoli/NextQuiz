@@ -81,6 +81,16 @@ export function CommandMenu() {
                         <span>Quiz List</span>
                     </CommandItem>
                 </CommandGroup>
+                <CommandGroup heading="User">
+                    {!session && <CommandItem onSelect={() => signIn()}>
+                        <LogIn className="mr-2 h-4 w-4"></LogIn>
+                        <span>Sign In</span>
+                    </CommandItem>}
+                    {session && <CommandItem onSelect={() => signOut()}>
+                        <LogOut className="mr-2 h-4 w-4"></LogOut>
+                        <span>Sign Out</span>
+                    </CommandItem>}
+                </CommandGroup>
                 <CommandGroup heading="Quizzes">
                     {quizzes.map((quiz) => (
                         <CommandItem key={quiz.id} onSelect={() => navigate(`/quiz/${quiz.id}`)}>
@@ -102,16 +112,6 @@ export function CommandMenu() {
                     {/*    <span>Settings</span>*/}
                     {/*    <CommandShortcut>⌘S</CommandShortcut>*/}
                     {/*</CommandItem>*/}
-                </CommandGroup>
-                <CommandGroup heading="User">
-                    {!session && <CommandItem onSelect={() => signIn()}>
-                        <LogIn className="mr-2 h-4 w-4"></LogIn>
-                        <span>Sign In</span>
-                    </CommandItem>}
-                    {session && <CommandItem onSelect={() => signOut()}>
-                        <LogOut className="mr-2 h-4 w-4"></LogOut>
-                        <span>Sign Out</span>
-                    </CommandItem>}
                 </CommandGroup>
             </CommandList>
         </CommandDialog>
