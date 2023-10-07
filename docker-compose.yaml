@@ -1,0 +1,8 @@
+services:
+  quiz-postgres:
+    image: postgres
+    container_name: quiz-postgres
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5433:5432"

@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { inter, sfPro } from "@/app/fonts";
 import { cx } from "class-variance-authority";
 import { Toaster } from "@/components/ui/toaster";
+import {CommandMenu} from "@/components/command-menu";
+import {Changelog} from "@/components/changelog";
 
 export const metadata = {
   title: "NextQuiz",
@@ -39,6 +41,8 @@ export default async function RootLayout({
             <main className={"mx-4 mt-16"}>{children}</main>
             <Toaster />
             <Analytics />
+            <CommandMenu />
+            <Changelog />
           </ThemeProvider>
         </body>
       </html>
