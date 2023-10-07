@@ -1,3 +1,5 @@
+const { version } = require("./package.json");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -8,6 +10,9 @@ const nextConfig = {
       "avatars.githubusercontent.com",
       "vercel.com",
     ],
+  },
+  publicRuntimeConfig: {
+    version,
   },
   async redirects() {
     return [

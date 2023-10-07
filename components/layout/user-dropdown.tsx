@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, LogOut, Moon, Sun } from "lucide-react";
+import {LayoutDashboard, LogOut, Moon, PenSquare, Sun} from "lucide-react";
 import Popover from "@/components/shared/popover";
 import Image from "next/image";
 import { Session } from "next-auth";
@@ -16,10 +16,20 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import * as React from "react";
+import {useRouter} from "next/navigation";
+import useLocalStorage from "@/lib/hooks/use-local-storage";
 
 export default function UserDropdown({ session }: { session: Session }) {
   const { email, image } = session?.user || {};
   const [openPopover, setOpenPopover] = useState(false);
+
+  const router = useRouter();
+
+  const changelogSelected = () => {
+    localStorage.removeItem('version');
+    // router.refresh();
+    location.reload();
+  }
 
   return (
     <div className="relative inline-block text-left">
@@ -90,6 +100,10 @@ export default function UserDropdown({ session }: { session: Session }) {
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={changelogSelected}>
+            <PenSquare className="mr-2 h-4 w-4" />
+            <span>Changelog</span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => signOut()}>
             {/*<Button onClick={() => signOut()}>*/}
             <LogOut className="mr-2 h-4 w-4" />

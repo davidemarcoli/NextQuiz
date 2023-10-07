@@ -163,7 +163,7 @@ export default function CreateQuiz() {
                 name="separator"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>Quiz Name</FormLabel>
+                    <FormLabel>Word Separator</FormLabel>
                     <FormControl>
                       <RadioGroup
                         className="flex flex-col space-y-1"
