@@ -91,7 +91,7 @@ export function CommandMenu() {
                         <span>Sign Out</span>
                     </CommandItem>}
                 </CommandGroup>
-                <CommandGroup heading="Quizzes">
+                {quizzes.length > 0 && <CommandGroup heading="Quizzes">
                     {quizzes.map((quiz) => (
                         <CommandItem key={quiz.id} onSelect={() => navigate(`/quiz/${quiz.id}`)}>
                             <span>{quiz.name}</span>
@@ -112,7 +112,7 @@ export function CommandMenu() {
                     {/*    <span>Settings</span>*/}
                     {/*    <CommandShortcut>⌘S</CommandShortcut>*/}
                     {/*</CommandItem>*/}
-                </CommandGroup>
+                </CommandGroup>}
             </CommandList>
         </CommandDialog>
     )
