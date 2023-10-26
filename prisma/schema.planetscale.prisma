@@ -1,14 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["jsonProtocol"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Account {
@@ -71,6 +68,8 @@ model QuizWord {
   quizId      String
   Skill       Skill[]
   LearnedWord LearnedWord[]
+
+  @@index([quizId])
 }
 
 model Quiz {
@@ -79,6 +78,8 @@ model Quiz {
   words  QuizWord[]
   user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  @@index([userId])
 }
 
 model Skill {
@@ -88,6 +89,9 @@ model Skill {
   quizWord    QuizWord @relation(fields: [quizWordId], references: [id], onDelete: Cascade)
   quizWordId  String
   proficiency Int
+
+  @@index([userId])
+  @@index([quizWordId])
 }
 
 model LearnedWord {
@@ -99,4 +103,5 @@ model LearnedWord {
   quizWord   QuizWord @relation(fields: [quizWordId], references: [id], onDelete: Cascade)
 
   @@index([userId, quizWordId])
+  @@index([quizWordId])
 }
