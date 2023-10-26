@@ -11,8 +11,6 @@ const {version} = require("/package.json");
 
 export function Changelog() {
 
-    console.log(version)
-
     const [showDialog, setShowDialog] = React.useState(false)
 
     React.useEffect(() => {
