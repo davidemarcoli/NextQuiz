@@ -11,8 +11,6 @@ const {version} = require("/package.json");
 
 export function Changelog() {
 
-    console.log(version)
-
     const [showDialog, setShowDialog] = React.useState(false)
 
     React.useEffect(() => {
@@ -27,16 +25,12 @@ export function Changelog() {
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Changelog</DialogTitle>
-                    <h1 className="text-2xl">October 07, 2023 - Release 1.0.0</h1>
+                    <h1 className="text-2xl">October 26, 2023 - Release {version}</h1>
                     <hr/>
 
                     <h3 className="text-xl">Summary</h3>
                     <ul>
-                        <li><strong>[New]</strong> Changelog</li>
-                        <li><strong>[New]</strong> Command Menu on desktop which can be opened with <code>Ctrl/Cmd +
-                            K</code> 🎉
-                        </li>
-                        <li><strong>[Upgraded]</strong> to Next.js 13.5 and TypeScript 5.2.2</li>
+                        <li><strong>[New]</strong> Add PWA</li>
 
                         {/*<li><strong>[New]</strong> Added new feature</li>*/}
                         {/*<li><strong>[Fix]</strong> Fixed some bugs</li>*/}

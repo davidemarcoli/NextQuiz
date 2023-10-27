@@ -1,16 +1,7 @@
 import {Quiz, User} from "@prisma/client";
-import Balancer from "react-wrap-balancer";
-import ReactMarkdown from "react-markdown";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import {Card, CardFooter, CardHeader, CardTitle,} from "@/components/ui/card";
 
 async function getQuizzes(): Promise<(Quiz & {user: User})[]> {
   return await prisma.quiz.findMany({
